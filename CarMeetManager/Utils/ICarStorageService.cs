@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using CarMeetManager.Models;
 
-namespace CarMeetManager.Services
+namespace CarMeetManager.Utils
 {
     public interface ICarStorageService
     {

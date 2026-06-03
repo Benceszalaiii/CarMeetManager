@@ -1,7 +1,7 @@
 using System;
 using CarMeetManager.Models;
 
-namespace CarMeetManager.Services
+namespace CarMeetManager.Utils
 {
     public class CarValidationService : ICarValidationService
     {

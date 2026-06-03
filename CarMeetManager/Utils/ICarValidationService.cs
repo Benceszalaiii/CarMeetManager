@@ -1,6 +1,6 @@
 using CarMeetManager.Models;
 
-namespace CarMeetManager.Services
+namespace CarMeetManager.Utils
 {
     public interface ICarValidationService
     {

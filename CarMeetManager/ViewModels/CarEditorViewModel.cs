@@ -2,7 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using CarMeetManager.Models;
-using CarMeetManager.Services;
+using CarMeetManager.Utils;
 
 namespace CarMeetManager.ViewModels
 {
