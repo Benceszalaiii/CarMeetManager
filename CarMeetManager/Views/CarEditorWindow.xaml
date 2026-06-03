@@ -10,6 +10,7 @@
                  Width="450"
                  Height="650"
                  WindowStartupLocation="CenterOwner"
+                 ExtendsContentIntoTitleBar="True"
                  WindowBackdropType="Mica"
                  UseSafeArea="True">
     <ui:FluentWindow.DataContext>
