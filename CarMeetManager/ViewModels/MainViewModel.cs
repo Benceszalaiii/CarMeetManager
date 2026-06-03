@@ -152,7 +152,8 @@ namespace CarMeetManager.ViewModels
                 Owner = Application.Current.MainWindow
             };
 
-            if (editor.DataContext is CarEditorViewModel vm)
+            var vm = editor.DataContext as CarEditorViewModel;
+            if (vm != null)
             {
                 vm.Car = car;
                 vm.ParkingPlaces.Clear();
@@ -165,7 +166,7 @@ namespace CarMeetManager.ViewModels
             }
 
             var result = editor.ShowDialog();
-            if (result == true)
+            if (result == true && vm != null)
             {
                 if (!string.IsNullOrWhiteSpace(vm.NewParkingPlace))
                 {
@@ -207,7 +208,8 @@ namespace CarMeetManager.ViewModels
                 Owner = Application.Current.MainWindow
             };
 
-            if (editor.DataContext is CarEditorViewModel vm)
+            var vm = editor.DataContext as CarEditorViewModel;
+            if (vm != null)
             {
                 vm.Car = carCopy;
                 vm.ParkingPlaces.Clear();
@@ -220,7 +222,7 @@ namespace CarMeetManager.ViewModels
             }
 
             var result = editor.ShowDialog();
-            if (result == true)
+            if (result == true && vm != null)
             {
                 if (!string.IsNullOrWhiteSpace(vm.NewParkingPlace))
                 {
