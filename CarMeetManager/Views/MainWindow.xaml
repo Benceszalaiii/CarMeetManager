@@ -9,106 +9,122 @@
                  Title="Car Meet Manager"
                  Width="1000"
                  Height="600"
-                 WindowStartupLocation="CenterScreen">
+                 WindowStartupLocation="CenterScreen"
+                 WindowBackdropType="Mica"
+                 UseSafeArea="True">
     <ui:FluentWindow.DataContext>
         <vm:MainViewModel />
     </ui:FluentWindow.DataContext>
 
-    <Grid Margin="16">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*" />
-            <ColumnDefinition Width="2*" />
-        </Grid.ColumnDefinitions>
 
-        <Label Grid.Row="0" Grid.ColumnSpan="2"
-               Content="Registered cars"
-               FontSize="24"
-               FontWeight="Bold"
-               Margin="0,0,0,16" />
+        <ui:TitleBar Grid.Row="0"
+                     Title="Car Meet Manager"
+                     Icon="Car" />
 
-        <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="0,0,16,16">
-            <Label Content="Search:" VerticalAlignment="Center" />
-            <TextBox Width="200"
-                     Margin="8,0,16,0"
-                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
-            <Label Content="Parking:" VerticalAlignment="Center" />
-            <ComboBox Width="120"
-                      Margin="8,0,0,0"
-                      ItemsSource="{Binding ParkingPlaces}"
-                      SelectedItem="{Binding SelectedParkingPlace}" />
-        </StackPanel>
+        <Grid Grid.Row="1" Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
 
-        <DataGrid Grid.Row="2" Grid.Column="0"
-                  ItemsSource="{Binding Cars}"
-                  SelectedItem="{Binding SelectedCar}"
-                  AutoGenerateColumns="False"
-                  IsReadOnly="True"
-                  Margin="0,0,16,16">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" />
-                <DataGridTextColumn Header="Year" Binding="{Binding Year}" Width="Auto" />
-                <DataGridTextColumn Header="Owner" Binding="{Binding OwnerName}" Width="*" />
-                <DataGridTextColumn Header="HP" Binding="{Binding Hp}" Width="Auto" />
-                <DataGridTextColumn Header="Nm" Binding="{Binding Nm}" Width="Auto" />
-                <DataGridTextColumn Header="kg" Binding="{Binding Kg}" Width="Auto" />
-                <DataGridTextColumn Header="Parking" Binding="{Binding ParkingPlace}" Width="Auto" />
-            </DataGrid.Columns>
-        </DataGrid>
+            <Label Grid.Row="0" Grid.ColumnSpan="2"
+                   Content="Registered cars"
+                   FontSize="24"
+                   FontWeight="Bold"
+                   Margin="0,0,0,16" />
 
-        <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,16,0">
-            <Button Content="Add"
-                    Width="80"
-                    Margin="0,0,8,0"
-                    Command="{Binding AddCarCommand}" />
-            <Button Content="Edit"
-                    Width="80"
-                    Margin="0,0,8,0"
-                    Command="{Binding EditCarCommand}" />
-            <Button Content="Delete"
-                    Width="80"
-                    Margin="0,0,16,0"
-                    Command="{Binding DeleteCarCommand}" />
-            <Button Content="Load"
-                    Width="80"
-                    Margin="0,0,8,0"
-                    Command="{Binding LoadCommand}" />
-            <Button Content="Save"
-                    Width="80"
-                    Command="{Binding SaveCommand}" />
-        </StackPanel>
-
-        <Border Grid.Row="2" Grid.Column="1"
-                Margin="0,0,0,16"
-                Padding="16"
-                BorderBrush="{DynamicResource ui:Theme.BorderLowBrush}"
-                BorderThickness="1"
-                CornerRadius="8">
-            <StackPanel>
-                <Label Content="Selected car details"
-                       FontWeight="Bold"
-                       Margin="0,0,0,8" />
-
-                <Image Width="200" Height="120"
-                       Stretch="UniformToFill"
-                       Margin="0,0,0,8"
-                       Source="{Binding SelectedCar.Image}" />
-
-                <TextBlock Text="{Binding SelectedCar.Name}" FontSize="16" FontWeight="Bold" />
-                <TextBlock Text="{Binding SelectedCar.OwnerName}" />
-                <TextBlock Text="{Binding SelectedCar.Year}" />
-                <TextBlock Text="{Binding SelectedCar.ParkingPlace}" />
+            <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="0,0,16,16">
+                <Label Content="Search:" VerticalAlignment="Center" />
+                <TextBox Width="200"
+                         Margin="8,0,16,0"
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+                <Label Content="Parking:" VerticalAlignment="Center" />
+                <ComboBox Width="120"
+                          Margin="8,0,0,0"
+                          ItemsSource="{Binding ParkingPlaces}"
+                          SelectedItem="{Binding SelectedParkingPlace}" />
             </StackPanel>
-        </Border>
 
-        <TextBlock Grid.Row="3" Grid.Column="1"
-                   Text="{Binding ErrorMessage}"
-                   Foreground="Red"
-                   TextWrapping="Wrap" />
+            <DataGrid Grid.Row="2" Grid.Column="0"
+                      ItemsSource="{Binding Cars}"
+                      SelectedItem="{Binding SelectedCar}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      Margin="0,0,16,16">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" />
+                    <DataGridTextColumn Header="Year" Binding="{Binding Year}" Width="Auto" />
+                    <DataGridTextColumn Header="Owner" Binding="{Binding OwnerName}" Width="*" />
+                    <DataGridTextColumn Header="HP" Binding="{Binding Hp}" Width="Auto" />
+                    <DataGridTextColumn Header="Nm" Binding="{Binding Nm}" Width="Auto" />
+                    <DataGridTextColumn Header="kg" Binding="{Binding Kg}" Width="Auto" />
+                    <DataGridTextColumn Header="Parking" Binding="{Binding ParkingPlace}" Width="Auto" />
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,16,0">
+                <Button Content="Add"
+                        Width="80"
+                        Margin="0,0,8,0"
+                        Command="{Binding AddCarCommand}" />
+                <Button Content="Edit"
+                        Width="80"
+                        Margin="0,0,8,0"
+                        Command="{Binding EditCarCommand}" />
+                <Button Content="Delete"
+                        Width="80"
+                        Margin="0,0,16,0"
+                        Command="{Binding DeleteCarCommand}" />
+                <Button Content="Load"
+                        Width="80"
+                        Margin="0,0,8,0"
+                        Command="{Binding LoadCommand}" />
+                <Button Content="Save"
+                        Width="80"
+                        Command="{Binding SaveCommand}" />
+            </StackPanel>
+
+            <Border Grid.Row="2" Grid.Column="1"
+                    Margin="0,0,0,16"
+                    Padding="16"
+                    BorderBrush="{DynamicResource ui:Theme.BorderLowBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                <StackPanel>
+                    <Label Content="Selected car details"
+                           FontWeight="Bold"
+                           Margin="0,0,0,8" />
+
+                    <Image Width="200" Height="120"
+                           Stretch="UniformToFill"
+                           Margin="0,0,0,8">
+                        <Image.Source>
+                            <Binding Path="SelectedCar.Image" TargetNullValue="{x:Null}" FallbackValue="{x:Null}" />
+                        </Image.Source>
+                    </Image>
+
+                    <TextBlock Text="{Binding SelectedCar.Name}" FontSize="16" FontWeight="Bold" />
+                    <TextBlock Text="{Binding SelectedCar.OwnerName}" />
+                    <TextBlock Text="{Binding SelectedCar.Year}" />
+                    <TextBlock Text="{Binding SelectedCar.ParkingPlace}" />
+                </StackPanel>
+            </Border>
+
+            <TextBlock Grid.Row="3" Grid.Column="1"
+                       Text="{Binding ErrorMessage}"
+                       Foreground="Red"
+                       TextWrapping="Wrap" />
+        </Grid>
     </Grid>
 </ui:FluentWindow>

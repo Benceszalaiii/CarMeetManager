@@ -31,7 +31,12 @@ namespace CarMeetManager.Services
                     return new List<Car>();
                 }
 
-                var cars = JsonSerializer.Deserialize<List<Car>>(json);
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+
+                var cars = JsonSerializer.Deserialize<List<Car>>(json, options);
                 return cars ?? new List<Car>();
             }
             catch (Exception)

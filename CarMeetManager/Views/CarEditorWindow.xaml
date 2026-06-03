@@ -9,97 +9,110 @@
                  Title="Edit car"
                  Width="450"
                  Height="650"
-                 WindowStartupLocation="CenterOwner">
+                 WindowStartupLocation="CenterOwner"
+                 WindowBackdropType="Mica"
+                 UseSafeArea="True">
     <ui:FluentWindow.DataContext>
         <vm:CarEditorViewModel />
     </ui:FluentWindow.DataContext>
 
-    <Grid Margin="16">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0"
-                Margin="0,0,0,16"
-                Padding="8"
-                BorderBrush="{DynamicResource ui:Theme.BorderLowBrush}"
-                BorderThickness="1"
-                CornerRadius="8">
-            <Image Width="380"
-                   Height="180"
-                   Stretch="UniformToFill"
-                   Source="{Binding Car.Image, TargetNullValue={x:Null}, FallbackValue={x:Null}}" />
-        </Border>
+        <ui:TitleBar Grid.Row="0"
+                     Title="Edit car"
+                     Icon="Edit" />
 
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" Margin="16">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
 
-            <Label Grid.Row="0" Grid.Column="0" Content="Image url:" Margin="0,0,8,8" VerticalAlignment="Center" />
-            <TextBox Grid.Row="0" Grid.Column="1"
-                     Margin="0,0,0,8"
-                     Text="{Binding Car.Image, UpdateSourceTrigger=PropertyChanged}" />
+            <Border Grid.Row="0"
+                    Margin="0,0,0,16"
+                    Padding="8"
+                    BorderBrush="{DynamicResource ui:Theme.BorderLowBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                <Image Width="380"
+                       Height="180"
+                       Stretch="UniformToFill"
+                       Source="{Binding Car.Image, TargetNullValue={x:Null}, FallbackValue={x:Null}}" />
+            </Border>
 
-            <Label Grid.Row="1" Grid.Column="0" Content="Name:" Margin="0,0,8,8" VerticalAlignment="Center" />
-            <TextBox Grid.Row="1" Grid.Column="1"
-                     Margin="0,0,0,8"
-                     Text="{Binding Car.Name, UpdateSourceTrigger=PropertyChanged}" />
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-            <Label Grid.Row="2" Grid.Column="0" Content="Year:" Margin="0,0,8,8" VerticalAlignment="Center" />
-            <ui:NumberBox Grid.Row="2" Grid.Column="1"
-                          Margin="0,0,0,8"
-                          Minimum="1900"
-                          Maximum="2100"
-                          Value="{Binding Car.Year, UpdateSourceTrigger=PropertyChanged}" />
+                <Label Grid.Row="0" Grid.Column="0" Content="Image url:" Margin="0,0,8,8" VerticalAlignment="Center" />
+                <TextBox Grid.Row="0" Grid.Column="1"
+                         Margin="0,0,0,8"
+                         Text="{Binding Car.Image, UpdateSourceTrigger=PropertyChanged}" />
 
-            <Label Grid.Row="3" Grid.Column="0" Content="Owner:" Margin="0,0,8,8" VerticalAlignment="Center" />
-            <TextBox Grid.Row="3" Grid.Column="1"
-                     Margin="0,0,0,8"
-                     Text="{Binding Car.OwnerName, UpdateSourceTrigger=PropertyChanged}" />
+                <Label Grid.Row="1" Grid.Column="0" Content="Name:" Margin="0,0,8,8" VerticalAlignment="Center" />
+                <TextBox Grid.Row="1" Grid.Column="1"
+                         Margin="0,0,0,8"
+                         Text="{Binding Car.Name, UpdateSourceTrigger=PropertyChanged}" />
 
-            <Label Grid.Row="4" Grid.Column="0" Content="HP:" Margin="0,0,8,8" VerticalAlignment="Center" />
-            <ui:NumberBox Grid.Row="4" Grid.Column="1"
-                          Margin="0,0,0,8"
-                          Minimum="0"
-                          Maximum="2000"
-                          Value="{Binding Car.Hp, UpdateSourceTrigger=PropertyChanged}" />
+                <Label Grid.Row="2" Grid.Column="0" Content="Year:" Margin="0,0,8,8" VerticalAlignment="Center" />
+                <ui:NumberBox Grid.Row="2" Grid.Column="1"
+                              Margin="0,0,0,8"
+                              Minimum="1900"
+                              Maximum="2100"
+                              Value="{Binding Car.Year, UpdateSourceTrigger=PropertyChanged}" />
 
-            <Label Grid.Row="5" Grid.Column="0" Content="Nm:" Margin="0,0,8,8" VerticalAlignment="Center" />
-            <ui:NumberBox Grid.Row="5" Grid.Column="1"
-                          Margin="0,0,0,8"
-                          Minimum="0"
-                          Maximum="3000"
-                          Value="{Binding Car.Nm, UpdateSourceTrigger=PropertyChanged}" />
+                <Label Grid.Row="3" Grid.Column="0" Content="Owner:" Margin="0,0,8,8" VerticalAlignment="Center" />
+                <TextBox Grid.Row="3" Grid.Column="1"
+                         Margin="0,0,0,8"
+                         Text="{Binding Car.OwnerName, UpdateSourceTrigger=PropertyChanged}" />
 
-            <Label Grid.Row="6" Grid.Column="0" Content="kg:" Margin="0,0,8,8" VerticalAlignment="Center" />
-            <ui:NumberBox Grid.Row="6" Grid.Column="1"
-                          Margin="0,0,0,8"
-                          Minimum="0"
-                          Maximum="5000"
-                          Value="{Binding Car.Kg, UpdateSourceTrigger=PropertyChanged}" />
+                <Label Grid.Row="4" Grid.Column="0" Content="HP:" Margin="0,0,8,8" VerticalAlignment="Center" />
+                <ui:NumberBox Grid.Row="4" Grid.Column="1"
+                              Margin="0,0,0,8"
+                              Minimum="0"
+                              Maximum="2000"
+                              Value="{Binding Car.Hp, UpdateSourceTrigger=PropertyChanged}" />
 
-            <Label Grid.Row="7" Grid.Column="0" Content="Parking:" Margin="0,0,8,0" VerticalAlignment="Center" />
-            <ComboBox Grid.Row="7" Grid.Column="1"
-                      IsEditable="True"
-                      ItemsSource="{Binding ParkingPlaces}"
-                      Text="{Binding NewParkingPlace, UpdateSourceTrigger=PropertyChanged}" />
+                <Label Grid.Row="5" Grid.Column="0" Content="Nm:" Margin="0,0,8,8" VerticalAlignment="Center" />
+                <ui:NumberBox Grid.Row="5" Grid.Column="1"
+                              Margin="0,0,0,8"
+                              Minimum="0"
+                              Maximum="3000"
+                              Value="{Binding Car.Nm, UpdateSourceTrigger=PropertyChanged}" />
+
+                <Label Grid.Row="6" Grid.Column="0" Content="kg:" Margin="0,0,8,8" VerticalAlignment="Center" />
+                <ui:NumberBox Grid.Row="6" Grid.Column="1"
+                              Margin="0,0,0,8"
+                              Minimum="0"
+                              Maximum="5000"
+                              Value="{Binding Car.Kg, UpdateSourceTrigger=PropertyChanged}" />
+
+                <Label Grid.Row="7" Grid.Column="0" Content="Parking:" Margin="0,0,8,0" VerticalAlignment="Center" />
+                <ComboBox Grid.Row="7" Grid.Column="1"
+                          IsEditable="True"
+                          ItemsSource="{Binding ParkingPlaces}"
+                          Text="{Binding NewParkingPlace, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
         </Grid>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,16,16">
             <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" VerticalAlignment="Center" Margin="0,0,16,0" />
             <Button Content="Cancel"
                     Width="90"
