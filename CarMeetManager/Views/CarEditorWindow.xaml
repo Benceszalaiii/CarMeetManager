@@ -94,8 +94,9 @@
 
             <Label Grid.Row="7" Grid.Column="0" Content="Parking:" Margin="0,0,8,0" VerticalAlignment="Center" />
             <ComboBox Grid.Row="7" Grid.Column="1"
+                      IsEditable="True"
                       ItemsSource="{Binding ParkingPlaces}"
-                      SelectedItem="{Binding Car.ParkingPlace}" />
+                      Text="{Binding NewParkingPlace, UpdateSourceTrigger=PropertyChanged}" />
         </Grid>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">

@@ -12,6 +12,7 @@ namespace CarMeetManager.ViewModels
         private readonly ICarValidationService _validationService;
         private Car _car;
         private string _errorMessage;
+        private string _newParkingPlace;
 
         public CarEditorViewModel()
         {
@@ -34,6 +35,16 @@ namespace CarMeetManager.ViewModels
 
         public ObservableCollection<string> ParkingPlaces { get; }
 
+        public string NewParkingPlace
+        {
+            get => _newParkingPlace;
+            set
+            {
+                _newParkingPlace = value;
+                OnPropertyChanged();
+            }
+        }
+
         public string ErrorMessage
         {
             get => _errorMessage;
@@ -49,6 +60,11 @@ namespace CarMeetManager.ViewModels
 
         private void OnSave(object parameter)
         {
+            if (!string.IsNullOrWhiteSpace(NewParkingPlace))
+            {
+                Car.ParkingPlace = NewParkingPlace;
+            }
+
             if (!_validationService.Validate(Car, out var error))
             {
                 ErrorMessage = error;

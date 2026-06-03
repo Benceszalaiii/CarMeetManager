@@ -34,6 +34,8 @@ namespace CarMeetManager.ViewModels
             AddCarCommand = new RelayCommand(_ => OnAddCar());
             EditCarCommand = new RelayCommand(_ => OnEditCar(), CanEditOrDelete);
             DeleteCarCommand = new RelayCommand(_ => OnDeleteCar(), CanEditOrDelete);
+
+            _ = OnLoadAsync();
         }
 
         public ObservableCollection<Car> Cars
@@ -158,11 +160,18 @@ namespace CarMeetManager.ViewModels
                 {
                     vm.ParkingPlaces.Add(place);
                 }
+
+                vm.NewParkingPlace = car.ParkingPlace;
             }
 
             var result = editor.ShowDialog();
             if (result == true)
             {
+                if (!string.IsNullOrWhiteSpace(vm.NewParkingPlace))
+                {
+                    car.ParkingPlace = vm.NewParkingPlace;
+                }
+
                 Cars.Add(car);
 
                 if (!string.IsNullOrWhiteSpace(car.ParkingPlace) && !ParkingPlaces.Contains(car.ParkingPlace))
@@ -206,11 +215,18 @@ namespace CarMeetManager.ViewModels
                 {
                     vm.ParkingPlaces.Add(place);
                 }
+
+                vm.NewParkingPlace = carCopy.ParkingPlace;
             }
 
             var result = editor.ShowDialog();
             if (result == true)
             {
+                if (!string.IsNullOrWhiteSpace(vm.NewParkingPlace))
+                {
+                    carCopy.ParkingPlace = vm.NewParkingPlace;
+                }
+
                 SelectedCar.Image = carCopy.Image;
                 SelectedCar.Name = carCopy.Name;
                 SelectedCar.Year = carCopy.Year;
