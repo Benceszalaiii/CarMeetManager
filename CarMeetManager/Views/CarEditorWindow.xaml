@@ -29,11 +29,8 @@
                 CornerRadius="8">
             <Image Width="380"
                    Height="180"
-                   Stretch="UniformToFill">
-                <Image.Source>
-                    <Binding Path="Car.Image" TargetNullValue="" />
-                </Image.Source>
-            </Image>
+                   Stretch="UniformToFill"
+                   Source="{Binding Car.Image, TargetNullValue={x:Null}, FallbackValue={x:Null}}" />
         </Border>
 
         <Grid Grid.Row="1">
