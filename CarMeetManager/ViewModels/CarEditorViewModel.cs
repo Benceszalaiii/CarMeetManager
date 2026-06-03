@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Input;
 using CarMeetManager.Models;
 using CarMeetManager.Services;
@@ -48,17 +49,42 @@ namespace CarMeetManager.ViewModels
 
         private void OnSave(object parameter)
         {
-            throw new NotImplementedException();
+            if (!_validationService.Validate(Car, out var error))
+            {
+                ErrorMessage = error;
+                return;
+            }
+
+            ErrorMessage = string.Empty;
+
+            if (Application.Current.Windows.Count > 0)
+            {
+                var window = Application.Current.Windows[Application.Current.Windows.Count - 1];
+                window.DialogResult = true;
+                window.Close();
+            }
         }
 
         private void OnCancel(object parameter)
         {
-            throw new NotImplementedException();
+            if (Application.Current.Windows.Count > 0)
+            {
+                var window = Application.Current.Windows[Application.Current.Windows.Count - 1];
+                window.DialogResult = false;
+                window.Close();
+            }
         }
 
         private bool ValidateCar()
         {
-            throw new NotImplementedException();
+            if (!_validationService.Validate(Car, out var error))
+            {
+                ErrorMessage = error;
+                return false;
+            }
+
+            ErrorMessage = string.Empty;
+            return true;
         }
     }
 }

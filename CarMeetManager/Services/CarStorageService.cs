@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
 using System.Threading.Tasks;
 using CarMeetManager.Models;
 
@@ -14,14 +16,51 @@ namespace CarMeetManager.Services
             _filePath = filePath;
         }
 
-        public Task<IList<Car>> LoadCarsAsync()
+        public async Task<IList<Car>> LoadCarsAsync()
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (!File.Exists(_filePath))
+                {
+                    return new List<Car>();
+                }
+
+                var json = await File.ReadAllTextAsync(_filePath);
+                if (string.IsNullOrWhiteSpace(json))
+                {
+                    return new List<Car>();
+                }
+
+                var cars = JsonSerializer.Deserialize<List<Car>>(json);
+                return cars ?? new List<Car>();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public Task SaveCarsAsync(IList<Car> cars)
+        public async Task SaveCarsAsync(IList<Car> cars)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var directory = Path.GetDirectoryName(_filePath);
+                if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+
+                var json = JsonSerializer.Serialize(cars, new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                });
+
+                await File.WriteAllTextAsync(_filePath, json);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
 [
   {
-    "image": "Images/golf_r32.png",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/d/d4/VW_Golf_V_R32_front_20071108.jpg",
     "name": "VW Golf R32",
     "year": 2004,
     "ownerName": "John Doe",
@@ -10,7 +10,7 @@
     "parkingPlace": "A1"
   },
   {
-    "image": "Images/bmw_e46_m3.png",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/0/0e/BMW_M3_E46_Cabrio_front.jpg",
     "name": "BMW E46 M3",
     "year": 2003,
     "ownerName": "Jane Smith",
