@@ -1,0 +1,22 @@
+[
+  {
+    "image": "Images/golf_r32.png",
+    "name": "VW Golf R32",
+    "year": 2004,
+    "ownerName": "John Doe",
+    "hp": 241,
+    "nm": 320,
+    "kg": 1500,
+    "parkingPlace": "A1"
+  },
+  {
+    "image": "Images/bmw_e46_m3.png",
+    "name": "BMW E46 M3",
+    "year": 2003,
+    "ownerName": "Jane Smith",
+    "hp": 343,
+    "nm": 365,
+    "kg": 1570,
+    "parkingPlace": "B2"
+  }
+]
