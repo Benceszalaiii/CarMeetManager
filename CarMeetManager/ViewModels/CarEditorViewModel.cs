@@ -13,6 +13,7 @@ namespace CarMeetManager.ViewModels
         private Car _car;
         private string _errorMessage;
         private string _newParkingPlace;
+        private bool _isSaved;
 
         public CarEditorViewModel()
         {
@@ -55,6 +56,16 @@ namespace CarMeetManager.ViewModels
             }
         }
 
+        public bool IsSaved
+        {
+            get => _isSaved;
+            private set
+            {
+                _isSaved = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ICommand SaveCommand { get; }
         public ICommand CancelCommand { get; }
 
@@ -72,21 +83,22 @@ namespace CarMeetManager.ViewModels
             }
 
             ErrorMessage = string.Empty;
+            IsSaved = true;
 
             if (Application.Current.Windows.Count > 0)
             {
                 var window = Application.Current.Windows[Application.Current.Windows.Count - 1];
-                window.DialogResult = true;
                 window.Close();
             }
         }
 
         private void OnCancel(object parameter)
         {
+            IsSaved = false;
+
             if (Application.Current.Windows.Count > 0)
             {
                 var window = Application.Current.Windows[Application.Current.Windows.Count - 1];
-                window.DialogResult = false;
                 window.Close();
             }
         }

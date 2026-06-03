@@ -165,14 +165,10 @@ namespace CarMeetManager.ViewModels
                 vm.NewParkingPlace = car.ParkingPlace;
             }
 
-            var result = editor.ShowDialog();
-            if (result == true && vm != null)
-            {
-                if (!string.IsNullOrWhiteSpace(vm.NewParkingPlace))
-                {
-                    car.ParkingPlace = vm.NewParkingPlace;
-                }
+            editor.ShowDialog();
 
+            if (vm != null && vm.IsSaved)
+            {
                 Cars.Add(car);
 
                 if (!string.IsNullOrWhiteSpace(car.ParkingPlace) && !ParkingPlaces.Contains(car.ParkingPlace))
@@ -221,14 +217,10 @@ namespace CarMeetManager.ViewModels
                 vm.NewParkingPlace = carCopy.ParkingPlace;
             }
 
-            var result = editor.ShowDialog();
-            if (result == true && vm != null)
-            {
-                if (!string.IsNullOrWhiteSpace(vm.NewParkingPlace))
-                {
-                    carCopy.ParkingPlace = vm.NewParkingPlace;
-                }
+            editor.ShowDialog();
 
+            if (vm != null && vm.IsSaved)
+            {
                 SelectedCar.Image = carCopy.Image;
                 SelectedCar.Name = carCopy.Name;
                 SelectedCar.Year = carCopy.Year;
