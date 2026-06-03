@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,6 +16,8 @@ namespace CarMeetManager.ViewModels
         private readonly ICarStorageService _storageService;
         private readonly ICarValidationService _validationService;
 
+        private readonly List<Car> _allCars;
+
         private ObservableCollection<Car> _cars;
         private Car _selectedCar;
         private string _searchText;
@@ -26,6 +29,7 @@ namespace CarMeetManager.ViewModels
             _storageService = new CarStorageService("Data/cars.json");
             _validationService = new CarValidationService();
 
+            _allCars = new List<Car>();
             _cars = new ObservableCollection<Car>();
             ParkingPlaces = new ObservableCollection<string>();
 
@@ -105,10 +109,14 @@ namespace CarMeetManager.ViewModels
             {
                 ErrorMessage = string.Empty;
                 var cars = await _storageService.LoadCarsAsync();
-                Cars = new ObservableCollection<Car>(cars);
+
+                _allCars.Clear();
+                _allCars.AddRange(cars);
+
+                ApplyFilters();
 
                 ParkingPlaces.Clear();
-                foreach (var place in Cars.Select(c => c.ParkingPlace).Distinct().OrderBy(p => p))
+                foreach (var place in _allCars.Select(c => c.ParkingPlace).Distinct().OrderBy(p => p))
                 {
                     if (!string.IsNullOrWhiteSpace(place))
                     {
@@ -127,7 +135,7 @@ namespace CarMeetManager.ViewModels
             try
             {
                 ErrorMessage = string.Empty;
-                await _storageService.SaveCarsAsync(Cars.ToList());
+                await _storageService.SaveCarsAsync(_allCars.ToList());
             }
             catch (Exception ex)
             {
@@ -169,7 +177,8 @@ namespace CarMeetManager.ViewModels
 
             if (vm != null && vm.IsSaved)
             {
-                Cars.Add(car);
+                _allCars.Add(car);
+                ApplyFilters();
 
                 if (!string.IsNullOrWhiteSpace(car.ParkingPlace) && !ParkingPlaces.Contains(car.ParkingPlace))
                 {
@@ -234,6 +243,8 @@ namespace CarMeetManager.ViewModels
                 {
                     ParkingPlaces.Add(SelectedCar.ParkingPlace);
                 }
+
+                ApplyFilters();
             }
         }
 
@@ -246,10 +257,10 @@ namespace CarMeetManager.ViewModels
 
             ErrorMessage = string.Empty;
 
-            Cars.Remove(SelectedCar);
-            SelectedCar = null;
+            _allCars.Remove(SelectedCar);
+            ApplyFilters();
 
-            var usedPlaces = Cars.Select(c => c.ParkingPlace).Distinct().ToList();
+            var usedPlaces = _allCars.Select(c => c.ParkingPlace).Distinct().ToList();
             for (int i = ParkingPlaces.Count - 1; i >= 0; i--)
             {
                 if (!usedPlaces.Contains(ParkingPlaces[i]))
@@ -257,6 +268,8 @@ namespace CarMeetManager.ViewModels
                     ParkingPlaces.RemoveAt(i);
                 }
             }
+
+            SelectedCar = null;
         }
 
         private bool CanEditOrDelete(object parameter)
@@ -266,10 +279,28 @@ namespace CarMeetManager.ViewModels
 
         private void ApplyFilters()
         {
-            if (Cars == null)
+            if (_allCars == null)
             {
                 return;
             }
+
+            var query = _allCars.AsEnumerable();
+
+            if (!string.IsNullOrWhiteSpace(SearchText))
+            {
+                var search = SearchText.Trim().ToLowerInvariant();
+                query = query.Where(c =>
+                    (!string.IsNullOrEmpty(c.Name) && c.Name.ToLowerInvariant().Contains(search)) ||
+                    (!string.IsNullOrEmpty(c.OwnerName) && c.OwnerName.ToLowerInvariant().Contains(search)) ||
+                    (!string.IsNullOrEmpty(c.ParkingPlace) && c.ParkingPlace.ToLowerInvariant().Contains(search)));
+            }
+
+            if (!string.IsNullOrWhiteSpace(SelectedParkingPlace))
+            {
+                query = query.Where(c => string.Equals(c.ParkingPlace, SelectedParkingPlace, StringComparison.OrdinalIgnoreCase));
+            }
+
+            Cars = new ObservableCollection<Car>(query);
         }
 
         private void ShowError(string message)
