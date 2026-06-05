@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using CarMeetManager.Models;
@@ -16,7 +15,7 @@ namespace CarMeetManager.ViewModels
         private readonly ICarStorageService _storageService;
         private readonly ICarValidationService _validationService;
 
-        private readonly List<Car> _allCars;
+        private readonly List<Car> _allCars = new List<Car>();
 
         private ObservableCollection<Car> _cars;
         private Car _selectedCar;
@@ -24,28 +23,29 @@ namespace CarMeetManager.ViewModels
         private string _selectedParkingPlace;
         private string _errorMessage;
 
+        public const string AllParkingPlaces = "(All)";
+
         public MainViewModel()
         {
             _storageService = new CarStorageService("Data/cars.json");
             _validationService = new CarValidationService();
 
-            _allCars = new List<Car>();
             _cars = new ObservableCollection<Car>();
-            ParkingPlaces = new ObservableCollection<string>();
+            ParkingPlaces = new ObservableCollection<string> { AllParkingPlaces };
 
-            LoadCommand = new RelayCommand(async _ => await OnLoadAsync());
-            SaveCommand = new RelayCommand(async _ => await OnSaveAsync());
+            LoadCommand = new RelayCommand(_ => OnLoad());
+            SaveCommand = new RelayCommand(_ => OnSave());
             AddCarCommand = new RelayCommand(_ => OnAddCar());
             EditCarCommand = new RelayCommand(_ => OnEditCar(), CanEditOrDelete);
             DeleteCarCommand = new RelayCommand(_ => OnDeleteCar(), CanEditOrDelete);
 
-            _ = OnLoadAsync();
+            OnLoad();
         }
 
         public ObservableCollection<Car> Cars
         {
             get => _cars;
-            set
+            private set
             {
                 _cars = value;
                 OnPropertyChanged();
@@ -103,26 +103,18 @@ namespace CarMeetManager.ViewModels
         public ICommand EditCarCommand { get; }
         public ICommand DeleteCarCommand { get; }
 
-        private async Task OnLoadAsync()
+        private void OnLoad()
         {
             try
             {
                 ErrorMessage = string.Empty;
-                var cars = await _storageService.LoadCarsAsync();
+                var cars = _storageService.LoadCars();
 
                 _allCars.Clear();
                 _allCars.AddRange(cars);
 
+                RefreshParkingPlaces();
                 ApplyFilters();
-
-                ParkingPlaces.Clear();
-                foreach (var place in _allCars.Select(c => c.ParkingPlace).Distinct().OrderBy(p => p))
-                {
-                    if (!string.IsNullOrWhiteSpace(place))
-                    {
-                        ParkingPlaces.Add(place);
-                    }
-                }
             }
             catch (Exception ex)
             {
@@ -130,12 +122,12 @@ namespace CarMeetManager.ViewModels
             }
         }
 
-        private async Task OnSaveAsync()
+        private void OnSave()
         {
             try
             {
                 ErrorMessage = string.Empty;
-                await _storageService.SaveCarsAsync(_allCars.ToList());
+                _storageService.SaveCars(_allCars);
             }
             catch (Exception ex)
             {
@@ -147,30 +139,15 @@ namespace CarMeetManager.ViewModels
         {
             ErrorMessage = string.Empty;
 
-            var car = new Car
-            {
-                Year = DateTime.Now.Year,
-                Hp = 100,
-                Nm = 100,
-                Kg = 1000
-            };
+            var car = new Car { Year = DateTime.Now.Year, Hp = 100, Nm = 100, Kg = 1000 };
 
-            var editor = new CarEditorWindow
-            {
-                Owner = Application.Current.MainWindow
-            };
-
+            var editor = new CarEditorWindow { Owner = Application.Current.MainWindow };
             var vm = editor.DataContext as CarEditorViewModel;
+
             if (vm != null)
             {
                 vm.Car = car;
-                vm.ParkingPlaces.Clear();
-                foreach (var place in ParkingPlaces)
-                {
-                    vm.ParkingPlaces.Add(place);
-                }
-
-                vm.NewParkingPlace = car.ParkingPlace;
+                SyncParkingPlacesToEditor(vm);
             }
 
             editor.ShowDialog();
@@ -178,134 +155,112 @@ namespace CarMeetManager.ViewModels
             if (vm != null && vm.IsSaved)
             {
                 _allCars.Add(car);
+                RefreshParkingPlaces();
                 ApplyFilters();
-
-                if (!string.IsNullOrWhiteSpace(car.ParkingPlace) && !ParkingPlaces.Contains(car.ParkingPlace))
-                {
-                    ParkingPlaces.Add(car.ParkingPlace);
-                }
             }
         }
 
         private void OnEditCar()
         {
-            if (SelectedCar == null)
-            {
-                return;
-            }
-
+            if (SelectedCar == null) return;
             ErrorMessage = string.Empty;
 
-            var carCopy = new Car
-            {
-                Image = SelectedCar.Image,
-                Name = SelectedCar.Name,
-                Year = SelectedCar.Year,
-                OwnerName = SelectedCar.OwnerName,
-                Hp = SelectedCar.Hp,
-                Nm = SelectedCar.Nm,
-                Kg = SelectedCar.Kg,
-                ParkingPlace = SelectedCar.ParkingPlace
-            };
-
-            var editor = new CarEditorWindow
-            {
-                Owner = Application.Current.MainWindow
-            };
-
+            var snapshot = CopyCar(SelectedCar);
+            var editor = new CarEditorWindow { Owner = Application.Current.MainWindow };
             var vm = editor.DataContext as CarEditorViewModel;
+
             if (vm != null)
             {
-                vm.Car = carCopy;
-                vm.ParkingPlaces.Clear();
-                foreach (var place in ParkingPlaces)
-                {
-                    vm.ParkingPlaces.Add(place);
-                }
-
-                vm.NewParkingPlace = carCopy.ParkingPlace;
+                vm.Car = snapshot;
+                SyncParkingPlacesToEditor(vm);
             }
 
             editor.ShowDialog();
 
             if (vm != null && vm.IsSaved)
             {
-                SelectedCar.Image = carCopy.Image;
-                SelectedCar.Name = carCopy.Name;
-                SelectedCar.Year = carCopy.Year;
-                SelectedCar.OwnerName = carCopy.OwnerName;
-                SelectedCar.Hp = carCopy.Hp;
-                SelectedCar.Nm = carCopy.Nm;
-                SelectedCar.Kg = carCopy.Kg;
-                SelectedCar.ParkingPlace = carCopy.ParkingPlace;
-
-                if (!string.IsNullOrWhiteSpace(SelectedCar.ParkingPlace) && !ParkingPlaces.Contains(SelectedCar.ParkingPlace))
-                {
-                    ParkingPlaces.Add(SelectedCar.ParkingPlace);
-                }
-
+                ApplyCopy(snapshot, SelectedCar);
+                RefreshParkingPlaces();
                 ApplyFilters();
             }
         }
 
         private void OnDeleteCar()
         {
-            if (SelectedCar == null)
-            {
-                return;
-            }
-
+            if (SelectedCar == null) return;
             ErrorMessage = string.Empty;
 
             _allCars.Remove(SelectedCar);
-            ApplyFilters();
-
-            var usedPlaces = _allCars.Select(c => c.ParkingPlace).Distinct().ToList();
-            for (int i = ParkingPlaces.Count - 1; i >= 0; i--)
-            {
-                if (!usedPlaces.Contains(ParkingPlaces[i]))
-                {
-                    ParkingPlaces.RemoveAt(i);
-                }
-            }
-
             SelectedCar = null;
+
+            RefreshParkingPlaces();
+            ApplyFilters();
         }
 
-        private bool CanEditOrDelete(object parameter)
-        {
-            return SelectedCar != null;
-        }
+        private bool CanEditOrDelete(object _) => SelectedCar != null;
 
         private void ApplyFilters()
         {
-            if (_allCars == null)
-            {
-                return;
-            }
-
             var query = _allCars.AsEnumerable();
 
             if (!string.IsNullOrWhiteSpace(SearchText))
             {
-                var search = SearchText.Trim().ToLowerInvariant();
+                var term = SearchText.Trim().ToLowerInvariant();
                 query = query.Where(c =>
-                    (!string.IsNullOrEmpty(c.Name) && c.Name.ToLowerInvariant().Contains(search)) ||
-                    (!string.IsNullOrEmpty(c.OwnerName) && c.OwnerName.ToLowerInvariant().Contains(search)) ||
-                    (!string.IsNullOrEmpty(c.ParkingPlace) && c.ParkingPlace.ToLowerInvariant().Contains(search)));
+                    (c.Name ?? string.Empty).ToLowerInvariant().Contains(term) ||
+                    (c.OwnerName ?? string.Empty).ToLowerInvariant().Contains(term) ||
+                    (c.ParkingPlace ?? string.Empty).ToLowerInvariant().Contains(term));
             }
 
-            if (!string.IsNullOrWhiteSpace(SelectedParkingPlace))
+            if (!string.IsNullOrWhiteSpace(SelectedParkingPlace) && SelectedParkingPlace != AllParkingPlaces)
             {
-                query = query.Where(c => string.Equals(c.ParkingPlace, SelectedParkingPlace, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(c =>
+                    string.Equals(c.ParkingPlace, SelectedParkingPlace, StringComparison.OrdinalIgnoreCase));
             }
 
             Cars = new ObservableCollection<Car>(query);
         }
 
-        private void ShowError(string message)
+        private void RefreshParkingPlaces()
         {
-            ErrorMessage = message;
+            var current = SelectedParkingPlace;
+
+            ParkingPlaces.Clear();
+            ParkingPlaces.Add(AllParkingPlaces);
+
+            foreach (var place in _allCars
+                .Select(c => c.ParkingPlace)
+                .Where(p => !string.IsNullOrWhiteSpace(p))
+                .Distinct()
+                .OrderBy(p => p))
+            {
+                ParkingPlaces.Add(place);
+            }
+
+            SelectedParkingPlace = ParkingPlaces.Contains(current) ? current : AllParkingPlaces;
+        }
+
+        private void SyncParkingPlacesToEditor(CarEditorViewModel vm)
+        {
+            vm.ParkingPlaces.Clear();
+            foreach (var place in ParkingPlaces.Where(p => p != AllParkingPlaces))
+                vm.ParkingPlaces.Add(place);
+        }
+
+        private void ShowError(string message) => ErrorMessage = message;
+
+        private static Car CopyCar(Car src) => new Car
+        {
+            Image = src.Image, Name = src.Name, Year = src.Year,
+            OwnerName = src.OwnerName, Hp = src.Hp, Nm = src.Nm,
+            Kg = src.Kg, ParkingPlace = src.ParkingPlace
+        };
+
+        private static void ApplyCopy(Car src, Car dst)
+        {
+            dst.Image = src.Image; dst.Name = src.Name; dst.Year = src.Year;
+            dst.OwnerName = src.OwnerName; dst.Hp = src.Hp; dst.Nm = src.Nm;
+            dst.Kg = src.Kg; dst.ParkingPlace = src.ParkingPlace;
         }
     }
 }
